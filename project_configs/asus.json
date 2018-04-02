@@ -1,0 +1,22 @@
+{
+  "name": "Asus",
+  "endpoints": {
+    "staging": "https://vastage1.creativevirtual15.com/asusstaging/bot.htm"
+  },
+  "live_chat_values": {
+    "live_chat_input": ["live chat", "notebook"],
+    "live_chat_skill": "Notebook"
+  },
+  "version_number": "2584",
+  "semantic_input": "",
+  "dtree_input": "My zenfone isn't working",
+  "top_semantic_answer_prefix": "I think you were asking: ",
+  "active_close_values":{
+    "input": "autosubmission",
+    "answer_id": "16"
+  },
+  "semantic_input": "phone",
+  "custom": {
+
+  }
+}
