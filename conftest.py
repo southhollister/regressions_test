@@ -22,8 +22,13 @@ def project_config():
 
 
 @pytest.fixture
-def session(project_config, params):
-    return EngineRequest(project_config['endpoints'][args.environment]).make_request(params)
+def endpoint(project_config):
+    return project_config['endpoints'][args.environment]
+
+
+@pytest.fixture
+def session(project_config, endpoint, params):
+    return EngineRequest(endpoint).make_request(params)
 
 
 @pytest.fixture
