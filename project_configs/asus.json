@@ -7,7 +7,7 @@
     "live_chat_input": ["live chat", "notebook"],
     "live_chat_skill": "Notebook"
   },
-  "version_number": "2584",
+  "version_number": "2589",
   "semantic_input": "",
   "dtree_input": "My zenfone isn't working",
   "top_semantic_answer_prefix": "I think you were asking: ",
