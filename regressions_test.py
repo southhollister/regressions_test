@@ -35,6 +35,8 @@ def create_parser():
     parser.add_argument('project', help='name of project to be regressions tested')
     parser.add_argument('-e', '--environment', default='staging', help='environment in which to run regressions tests')
     parser.add_argument('--all', dest='ALL', action='store_true', help='if present run all rts for <project>')
+    parser.add_argument('-V', '--version_number', type=int, default=0, metavar='version_number', help='Version number of kb to be tested.')
+    commands = parser.add_subparsers()
     parser.set_defaults(func=main)
     return parser.parse_args(sys.argv[1:])
 
@@ -43,6 +45,25 @@ def create_parser():
 # **************** Main ****************
 #
 def main():
+    """
+    Default functionality
+
+    """
+    # if version number is in command line args reset version number in project config file
+    if args.version_number != 0:
+        update_version_number(args.version_number)
+
+    else:
+        # if captured version number is valid
+        try:
+            v_num = input("Enter kb version number (Press enter to re-run last test): ")
+            update_version_number(int(v_num))
+        except ValueError:
+            print 'Version number must be an integer.'
+            print 'Testing against last saved version.'
+        except SyntaxError:
+            pass
+
     try:
         # set up project params
         config = json.loads(open('project_configs/%s.json' % args.project.lower()).read())
@@ -96,8 +117,19 @@ def add_endpoint():
     pass
 
 
-def update_version():
-    pass
+def update_version_number(num):
+    """
+    Update version number in json config file.
+    :param num: int; new kb version number to be updated in project config file
+    :return:
+    """
+    with open('project_configs/%s.json' % args.project.lower(), 'r') as f:
+        new_json = json.loads(f.read())
+
+    new_json['version_number'] = str(num)
+
+    with open('project_configs/%s.json' % args.project.lower(), 'w') as f:
+        f.write(json.dumps(new_json, indent=2, sort_keys=True))
 
 
 if __name__ == '__main__':
