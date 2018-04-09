@@ -1,13 +1,12 @@
 import pytest
 import json
-from regressions_test import create_parser
 from engine_request import EngineRequest
-
-args = create_parser()
 
 
 def pytest_addoption(parser):
     parser.addoption("--params", action="store", default='{"params":"", "entry":""}')
+    parser.addoption('--project', action='store')
+    parser.addoption('--environment', action='store')
 
 
 @pytest.fixture
@@ -16,14 +15,14 @@ def params(request):
 
 
 @pytest.fixture
-def project_config():
-    config = json.loads(open('project_configs/%s.json' % args.project.lower()).read())
+def project_config(request):
+    config = json.loads(open('project_configs/%s.json' % request.config.getoption('project').lower()).read())
     return config
 
 
 @pytest.fixture
-def endpoint(project_config):
-    return project_config['endpoints'][args.environment]
+def endpoint(project_config, request):
+    return project_config['endpoints'][request.config.getoption('environment')]
 
 
 @pytest.fixture

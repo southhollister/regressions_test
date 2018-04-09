@@ -6,6 +6,10 @@
   "custom": {}, 
   "dtree_input": "My zenfone isn't working", 
   "endpoints": {
+    "il1va3": "http://il1vaprod3.creativevirtual15.com:8581/asus/bot.htm", 
+    "il1va4": "http://il1vaprod4.creativevirtual15.com:8581/asus/bot.htm", 
+    "ny1va3": "http://ny1vaprod3.creativevirtual15.com:8581/asus/bot.htm", 
+    "ny1va4": "http://ny1vaprod4.creativevirtual15.com:8581/asus/bot.htm", 
     "staging": "https://vastage1.creativevirtual15.com/asusstaging/bot.htm"
   }, 
   "live_chat_values": {
