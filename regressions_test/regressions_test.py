@@ -38,7 +38,7 @@ def create_parser():
     parser.add_argument('project', help='Name of project.')
 
     main_parser = argparse.ArgumentParser(description='Regressions testing module for core script projects.',
-                                          usage='%(prog)s [-h] COMMAND PROJECT ARGS')
+                                          usage='regressions_test [-h] COMMAND PROJECT ARGS')
     commands = main_parser.add_subparsers(metavar='COMMANDS')
 
     update_version = commands.add_parser('update_version',
