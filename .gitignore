@@ -4,3 +4,4 @@
 project_config.py
 *.pyc
 fiddle.*
+*egg-*/

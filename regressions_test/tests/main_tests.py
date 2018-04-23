@@ -1,5 +1,4 @@
-from engine_request import EngineRequest
-import regressions_test
+from regressions_test.engine_request import EngineRequest
 import json
 import pytest
 import re
