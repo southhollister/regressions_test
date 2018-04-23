@@ -1,28 +1,31 @@
 {
-  "name": "Quark",
-  "endpoints": {
-    "staging": "https://vastage1.creativevirtual15.com/quarkstaging/bot.htm"
-  },
-  "live_chat_values": {
-    "live_chat_input": ["live chat"],
-    "live_chat_skill": "TEST_QUEUE_NAME"
-  },
-  "version_number": "2590",
-  "active_close_values":{
-    "input": "autosubmission",
-    "answer_id": "52"
-  },
-  "semantic_input": "products",
-  "custom_back_text_values": {
-    "inputs": [
-      "test dtree",
-      "option 2"
-    ],
-    "text": "Get Back!"
-  },
+  "active_close_values": {
+    "answer_id": "52", 
+    "input": "autosubmission"
+  }, 
   "blank_connector_values": {
     "input": "test blank connectors"
-  },
-  "dtree_input": "test dtree",
-  "custom": {}
+  }, 
+  "custom": {}, 
+  "custom_back_text_values": {
+    "inputs": [
+      "test dtree", 
+      "option 2"
+    ], 
+    "text": "Get Back!"
+  }, 
+  "dtree_input": "test dtree", 
+  "endpoints": {
+    "staging": "https://vastage1.creativevirtual15.com/quarkstaging/bot.htm", 
+    "test_endpoint": "google.com"
+  }, 
+  "live_chat_values": {
+    "live_chat_input": [
+      "live chat"
+    ], 
+    "live_chat_skill": "TEST_QUEUE_NAME"
+  }, 
+  "name": "Quark", 
+  "semantic_input": "products", 
+  "version_number": "3000"
 }
