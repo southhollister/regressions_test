@@ -64,11 +64,11 @@ def create_parser():
     tester.add_argument('-a', dest='all', action='store_true', help='Run tests on all known endpoints.')
     tester.set_defaults(func=test)
 
-    # _show = commands.add_parser('show',
-    #                             parents=[parser],
-    #                             help='Print list of selected config vars.')
-    # _show.add_argument('var', help='Config var to retrieve.')
-    # _show.set_defaults(func=show)
+    _show = commands.add_parser('show',
+                                parents=[parser],
+                                help='Print list of selected config vars.')
+    _show.add_argument('var', help='Config var to retrieve.')
+    _show.set_defaults(func=show)
 
     return main_parser.parse_args()
 
@@ -102,16 +102,19 @@ def test(args):
         except SyntaxError:
             pass
 
+    directory = os.path.dirname(os.path.abspath(__file__))
     try:
         # set up project params
-        config = json.loads(open('project_configs/%s.json' % args.project.lower()).read())
+        config = json.loads(open('%s/project_configs/%s.json' % (directory,
+                                                                 args.project.lower())).read())
     except ValueError, e:
         print 'Error while reading config file: %s' % e
     except IOError, e:
         print '%s; Be sure regressions tests have been set up for this project.' % e
+        print os.path.dirname(os.path.abspath(__file__))
 
     project = config.get('name')
-    # Ga
+    # Gather endpoints
     if not args.all and config.get('endpoints').get(args.environment):
         endpoints = [{
             'ep': config['endpoints'][args.environment],
@@ -145,7 +148,11 @@ def test(args):
             print 'Failed to initiate session. Response: %s' % req
 
         # list of params to pass pytest; add custom tests if available for project
-        tests = ['-v', '--project=%s' % project, '--environment=%s' % environment, '--params=%s' % json.dumps(params), 'tests/main_tests.py']
+        tests = ['-v',
+                 '--project=%s' % project,
+                 '--environment=%s' % environment,
+                 '--params=%s' % json.dumps(params),
+                 '%s/tests/main_tests.py' % directory]
         custom_tests = ['%s' % f for f in os.listdir(os.getcwd()) if project.lower() in f.lower()]
         tests.extend(custom_tests)
         print tests
@@ -158,7 +165,8 @@ def show(args):
     Print list of selected config vars.
     :param args: Pertinent args: project, var
     """
-    with open('project_configs/%s.json' % args.project.lower(), 'r') as f:
+    directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'project_configs', '%s.json' % args.project.lower())
+    with open(directory, 'r') as f:
         config = json.loads(f.read())
 
     if not config.get(args.var):
