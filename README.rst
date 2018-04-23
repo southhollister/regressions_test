@@ -1,3 +1,5 @@
+To install run python setup.py install
+
 Usage:
     regressions_test
     regressions_test [-h | --help]
@@ -9,7 +11,7 @@ Usage:
 
 Commands:
     test            Run regression tests on PROJECT using ENVIRONMENT endpoint
-        ENVIRONMENT Defaults to staging; 
+        ENVIRONMENT Defaults to staging;
         -a          Run regressions tests on all endpoints
         -V          Update kb version number before running tests
     update_version  Update kb version number to VERSION_NUMBER for regressions test

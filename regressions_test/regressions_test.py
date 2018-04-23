@@ -24,7 +24,7 @@ import os
 from engine_request import EngineRequest
 
 
-__version__ = 3
+__version__ = 3.5
 
 
 def create_parser():
