@@ -1,14 +1,23 @@
 {
-  "name": "Altice",
+  "custom": {
+    "shortened_related_result_text_input": "schedule appointment",
+    "user_intent_values": {
+      "input": "want new service",
+      "text": "I want new service"
+    }
+  }, 
+  "dtree_input": "lower my bill", 
   "endpoints": {
     "staging": "https://vastage1.creativevirtual15.com/alticestaging/bot.htm"
-  },
+  }, 
   "live_chat_values": {
-    "live_chat_input": ["live chat"],
+    "live_chat_input": [
+      "live chat"
+    ], 
     "live_chat_skill": "ERROR"
-  },
-  "version_number": "44",
-  "semantic_input": "products",
-  "dtree_input": "lower my bill",
-  "custom": {}
+  }, 
+  "name": "Altice", 
+  "related_results_prompt": "Here are some related items:", 
+  "semantic_input": "products", 
+  "version_number": "88"
 }

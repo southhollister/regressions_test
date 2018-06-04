@@ -29,8 +29,13 @@ def endpoint(project_config, request):
 
 
 @pytest.fixture
-def session(project_config, endpoint, params):
-    return EngineRequest(endpoint).make_request(params)
+def engine(endpoint):
+    return EngineRequest(endpoint=endpoint)
+
+
+@pytest.fixture
+def session(project_config, engine, params):
+    return engine.make_request(params)
 
 
 @pytest.fixture
@@ -91,4 +96,9 @@ def blank_connector_values(project_config):
 @pytest.fixture
 def dtree_input(project_config):
     return project_config.get('dtree_input', {})
+
+
+@pytest.fixture
+def related_results_prompt(project_config):
+    return project_config.get('related_results_prompt', None)
 

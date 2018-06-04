@@ -24,7 +24,7 @@ import os
 from engine_request import EngineRequest
 
 
-__version__ = 3.5
+__version__ = 4
 
 
 def create_parser():
@@ -153,7 +153,8 @@ def test(args):
                  '--environment=%s' % environment,
                  '--params=%s' % json.dumps(params),
                  '%s/tests/main_tests.py' % directory]
-        custom_tests = ['%s' % f for f in os.listdir(os.getcwd()) if project.lower() in f.lower()]
+        custom_test_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tests')
+        custom_tests = [os.path.join(custom_test_dir, f) for f in os.listdir(custom_test_dir) if project.lower() in f.lower()]
         tests.extend(custom_tests)
         print tests
 
@@ -208,12 +209,14 @@ def update_version_number(num=None, args=None):
 
     num = num if num else args.version_number
 
-    with open('project_configs/%s.json' % args.project.lower(), 'r') as f:
+    directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'project_configs', '%s.json' % args.project.lower())
+
+    with open(directory, 'r') as f:
         new_json = json.loads(f.read())
 
     new_json['version_number'] = str(num)
 
-    with open('project_configs/%s.json' % args.project.lower(), 'w') as f:
+    with open(directory, 'w') as f:
         f.write(json.dumps(new_json, indent=2, sort_keys=True))
 
     print 'Version number updated to:', num

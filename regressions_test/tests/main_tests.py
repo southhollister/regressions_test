@@ -3,7 +3,6 @@ import json
 import pytest
 import re
 
-
 # Tests
 def test_standard_template(response_keys, session):
     """
@@ -32,6 +31,7 @@ def test_init_standard_response_values(init_none_keys, init_value_keys, session)
     assert req['autosubmitwaittime'].isdigit()
     assert req['backnavdisabled'] == 'true'
     assert len(req['botanswer']) > 5
+    # TODO update to use config var
     assert 'root' in req['currentBA'].lower()
     assert 'root' in req['currentChannel'].lower()
     assert req['disableautocomplete'] == 'false'
@@ -117,9 +117,20 @@ def test_blank_connectors(blank_connector_values, params, endpoint):
 
 
 def test_dtree(dtree_input, endpoint):
-    params = {}
+    params = dict()
     params['ident'] = ''
     params['entry'] = dtree_input
     r = EngineRequest(endpoint).make_request(params)
 
     assert r.get('connectors') is not None, 'Response did not contain connectors. Response: %s' % r
+
+
+# TODO add test for related results prompt
+def test_related_results_prompt(engine, params, related_results_prompt, semantic_input, session):
+    params['ident'] = session.get('ident', '')
+    params['entry'] = semantic_input
+
+    r = engine.make_request(params)
+
+    assert r.get('relatedlistprompttext') == related_results_prompt, \
+        'Session id: %s || Res. Session id: %s' % (session.get('ident'), r.get('ident'))
