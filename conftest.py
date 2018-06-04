@@ -1,12 +1,14 @@
 import pytest
 import json
-from engine_request import EngineRequest
+import os
+from regressions_test.engine_request import EngineRequest
 
 
 def pytest_addoption(parser):
-    parser.addoption("--params", action="store", default='{"params":"", "entry":""}')
     parser.addoption('--project', action='store')
     parser.addoption('--environment', action='store')
+    parser.addoption("--params", action="store", default='{"params":"", "entry":""}')
+
 
 
 @pytest.fixture
@@ -16,7 +18,8 @@ def params(request):
 
 @pytest.fixture
 def project_config(request):
-    config = json.loads(open('project_configs/%s.json' % request.config.getoption('project').lower()).read())
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'regressions_test', 'project_configs', '%s.json' % request.config.getoption('project').lower())
+    config = json.loads(open(p).read())
     return config
 
 
@@ -26,8 +29,13 @@ def endpoint(project_config, request):
 
 
 @pytest.fixture
-def session(project_config, endpoint, params):
-    return EngineRequest(endpoint).make_request(params)
+def engine(endpoint):
+    return EngineRequest(endpoint=endpoint)
+
+
+@pytest.fixture
+def session(project_config, engine, params):
+    return engine.make_request(params)
 
 
 @pytest.fixture
@@ -88,4 +96,9 @@ def blank_connector_values(project_config):
 @pytest.fixture
 def dtree_input(project_config):
     return project_config.get('dtree_input', {})
+
+
+@pytest.fixture
+def related_results_prompt(project_config):
+    return project_config.get('related_results_prompt', None)
 
