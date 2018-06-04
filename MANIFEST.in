@@ -1,3 +1,4 @@
 include README.rst
 include regressions_test/project_configs/*
 include regressions_test/tests/*
+include VERSION

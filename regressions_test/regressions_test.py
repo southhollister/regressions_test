@@ -23,8 +23,15 @@ import argparse
 import os
 from engine_request import EngineRequest
 
-
-__version__ = 4
+# Get version number from version file
+directory = os.path.join(*os.path.split(os.path.dirname(os.path.abspath(__file__)))[:-1])
+try:
+    with open(os.path.join(directory, 'VERSION'), 'rb') as f:
+        __version__ = f.read().decode('utf-8').strip()
+except Exception, e:
+    __version__ = "ERROR"
+    print(directory)
+    print(e)
 
 
 def create_parser():
@@ -32,13 +39,20 @@ def create_parser():
     Create argparser object.
     :return: argparser
     """
+    # Parent parser for subparsers
     parser = argparse.ArgumentParser(
         add_help=False
     )
     parser.add_argument('project', help='Name of project.')
 
+    # Main parser; has commands sub parser
     main_parser = argparse.ArgumentParser(description='Regressions testing module for core script projects.',
                                           usage='regressions_test [-h] COMMAND PROJECT ARGS')
+    main_parser.add_argument('--version',
+                             action='version',
+                             version='%(prog)s' + __version__,
+                             help='Show version number of currently installed package.')
+
     commands = main_parser.add_subparsers(metavar='COMMANDS')
 
     update_version = commands.add_parser('update_version',
