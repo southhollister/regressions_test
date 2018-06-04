@@ -2,7 +2,6 @@
 Custom tests for Altice project
 """
 from pytest import fixture
-from regressions_test.engine_request import EngineRequest
 
 
 @fixture

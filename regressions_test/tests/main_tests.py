@@ -45,7 +45,7 @@ def test_init_standard_response_values(init_none_keys, init_value_keys, session)
     assert req['validresponse'] == 'CVUSAVA Status: Ok'
 
 
-def test_live_chat(live_chat_values, params, endpoint):
+def test_live_chat(live_chat_values, params, engine):
     """
     Test live chat etvs on non INIT transaction.
     :param live_chat_values:
@@ -55,7 +55,7 @@ def test_live_chat(live_chat_values, params, endpoint):
     # params = session.get('ident')
     for i in live_chat_values['live_chat_input']:
         params['entry'] = i
-        r = EngineRequest(endpoint).make_request(params)
+        r = engine.make_request(params)
 
     assert r.get('ident') == params['ident']
     assert r.get('livechatskill') == live_chat_values['live_chat_skill']
@@ -63,26 +63,26 @@ def test_live_chat(live_chat_values, params, endpoint):
 
 
 # TODO build out function to test complete tree
-def test_active_close(active_close_values, params, endpoint):
+def test_active_close(active_close_values, params, engine):
     if not active_close_values: pytest.skip('No active close values found in config.')
     params['entry'] = active_close_values['input']
-    r = EngineRequest(endpoint).make_request(params)
+    r = engine.make_request(params)
     assert r.get('ident') == params['ident'], 'First active close input failed'
     assert r.get('answerID') == active_close_values['answer_id'], 'Did not hit active close dtree'
     assert r.get('autosubmitmode') == 'false', 'autosubmitmode did not return false first auto submit transaction'
     assert r.get('hideuserentry') == 'true', 'user entry not hidden'
 
 
-def test_semantic(semantic_input, params, endpoint):
+def test_semantic(semantic_input, params, engine):
     if not semantic_input: pytest.skip('No semantic input to test!')
     params['entry'] = semantic_input
-    r = EngineRequest(endpoint).make_request(params)
+    r = engine.make_request(params)
     assert r.get('related_list', None) is not None
 
 
-def test_versionnumber(version_number, params, endpoint):
+def test_versionnumber(version_number, params, engine):
     params['entry'] = 'versionnumber'
-    r = EngineRequest(endpoint).make_request(params)
+    r = engine.make_request(params)
 
     v = re.search('publish_id: (\d+)', r.get('botanswer'))
     if v:
@@ -91,36 +91,36 @@ def test_versionnumber(version_number, params, endpoint):
         assert False, 'Version number not found. Botanswer: %s' % r.get('botanswer')
 
 
-def test_custom_back_text(custom_back_text_values, params, endpoint):
+def test_custom_back_text(custom_back_text_values, params, engine):
     if not custom_back_text_values: pytest.skip('Skipping custom back text test')
 
     # enter dtree
     params['entry'] = custom_back_text_values['inputs'][0]
-    r = EngineRequest(endpoint).make_request(params)
+    r = engine.make_request(params)
     print 'Response from first dtree transaction: Answer: %s | Ident: %s' % (r.get('botanswer'), r.get('ident'))
 
     # hit test node
     params['ident'] = r.get('ident')
     params['entry'] = custom_back_text_values['inputs'][1]
-    r = EngineRequest(endpoint).make_request(params)
+    r = engine.make_request(params)
     print 'Response from second dtree transaction: Answer: %s | Ident: %s' % (r.get('botanswer'), r.get('ident'))
 
     assert r.get('backnavtext') == custom_back_text_values['text']
 
 
-def test_blank_connectors(blank_connector_values, params, endpoint):
+def test_blank_connectors(blank_connector_values, params, engine):
     if not blank_connector_values: pytest.skip('Skipping blank connectors test')
     params['entry'] = blank_connector_values['input']
-    r = EngineRequest(endpoint).make_request(params)
+    r = engine.make_request(params)
 
     assert r.get('connectors') is None, 'Response returned connectors: %s' % r.get('connectors')
 
 
-def test_dtree(dtree_input, endpoint):
+def test_dtree(dtree_input, engine):
     params = dict()
     params['ident'] = ''
     params['entry'] = dtree_input
-    r = EngineRequest(endpoint).make_request(params)
+    r = engine.make_request(params)
 
     assert r.get('connectors') is not None, 'Response did not contain connectors. Response: %s' % r
 

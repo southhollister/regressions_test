@@ -7,7 +7,7 @@ with open('README.rst', 'rb') as f:
 
 setup(
     name='regressions_test',
-    version='4.0.1',
+    version='4.1.0',
     packages=['regressions_test'],
     install_requires=['pytest'],
     scripts=['bin/regressions_test'],
