@@ -14,6 +14,8 @@ Commands:
 """
 
 # TODO https://stackoverflow.com/questions/24892396/py-test-logging-messages-and-test-results-assertions-into-a-single-file
+# TODO add command to list all projects
+# TODO add create new project command
 
 import sys
 import urllib2
@@ -23,14 +25,18 @@ import argparse
 import os
 from engine_request import EngineRequest
 
+
+# Constants
+DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+
 # Get version number from version file
-directory = os.path.join(*os.path.split(os.path.dirname(os.path.abspath(__file__)))[:-1])
+d = os.path.join(*os.path.split(DIRECTORY)[:-1])
 try:
-    with open(os.path.join(directory, 'VERSION'), 'rb') as f:
+    with open(os.path.join(d, 'VERSION'), 'rb') as f:
         __version__ = f.read().decode('utf-8').strip()
 except Exception, e:
     __version__ = "ERROR"
-    print(directory)
+    print(d)
     print(e)
 
 
@@ -116,16 +122,15 @@ def test(args):
         except SyntaxError:
             pass
 
-    directory = os.path.dirname(os.path.abspath(__file__))
     try:
         # set up project params
-        config = json.loads(open('%s/project_configs/%s.json' % (directory,
+        config = json.loads(open('%s/project_configs/%s.json' % (DIRECTORY,
                                                                  args.project.lower())).read())
     except ValueError, e:
         print 'Error while reading config file: %s' % e
     except IOError, e:
         print '%s; Be sure regressions tests have been set up for this project.' % e
-        print os.path.dirname(os.path.abspath(__file__))
+        print DIRECTORY
 
     project = config.get('name')
     # Gather endpoints
@@ -166,8 +171,8 @@ def test(args):
                  '--project=%s' % project,
                  '--environment=%s' % environment,
                  '--params=%s' % json.dumps(params),
-                 '%s/tests/main_tests.py' % directory]
-        custom_test_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tests')
+                 '%s/tests/main_tests.py' % DIRECTORY]
+        custom_test_dir = os.path.join(DIRECTORY, 'tests')
         custom_tests = [os.path.join(custom_test_dir, f) for f in os.listdir(custom_test_dir) if project.lower() in f.lower()]
         tests.extend(custom_tests)
         print tests
@@ -180,7 +185,7 @@ def show(args):
     Print list of selected config vars.
     :param args: Pertinent args: project, var
     """
-    directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'project_configs', '%s.json' % args.project.lower())
+    directory = os.path.join(DIRECTORY, 'project_configs', '%s.json' % args.project.lower())
     with open(directory, 'r') as f:
         config = json.loads(f.read())
 
@@ -202,7 +207,8 @@ def add_endpoint(args):
     :param args: Pertinent args: project, name, url.
     """
 
-    with open('project_configs/%s.json' % args.project.lower(), 'r') as f:
+    directory = os.path.join(DIRECTORY, 'project_configs', '%s.json' % args.project.lower())
+    with open(directory, 'r') as f:
         new_json = json.loads(f.read())
 
     new_json['endpoints'][args.name] = args.url
@@ -223,7 +229,7 @@ def update_version_number(num=None, args=None):
 
     num = num if num else args.version_number
 
-    directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'project_configs', '%s.json' % args.project.lower())
+    directory = os.path.join(DIRECTORY, 'project_configs', '%s.json' % args.project.lower())
 
     with open(directory, 'r') as f:
         new_json = json.loads(f.read())
@@ -234,3 +240,17 @@ def update_version_number(num=None, args=None):
         f.write(json.dumps(new_json, indent=2, sort_keys=True))
 
     print 'Version number updated to:', num
+
+
+def update_config(args):
+    """Update config variable"""
+
+    directory = os.path.join(DIRECTORY, 'project_configs', '%s.json' % args.project.lower())
+
+    with open(directory, 'r') as f:
+        config = json.loads(f.read())
+
+    FROM_FILE = args.from_file
+
+    if not FROM_FILE:
+        config.update(json.loads(args.json))
