@@ -2,4 +2,4 @@ include README.rst
 include regressions_test/project_configs/*
 include regressions_test/tests/*
 include VERSION
-include conftest.py
+include regressions_test/tconftest.py

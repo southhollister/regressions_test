@@ -1,7 +1,7 @@
 import pytest
 import json
 import os
-from regressions_test.engine_request import EngineRequest
+from engine_request import EngineRequest
 
 
 def pytest_addoption(parser):
@@ -18,7 +18,7 @@ def params(request):
 
 @pytest.fixture
 def project_config(request):
-    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'regressions_test', 'project_configs', '%s.json' % request.config.getoption('project').lower())
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'project_configs', '%s.json' % request.config.getoption('project').lower())
     config = json.loads(open(p).read())
     return config
 
