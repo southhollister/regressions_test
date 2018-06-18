@@ -56,17 +56,19 @@ def create_parser():
                                           usage='regressions_test [-h] COMMAND PROJECT ARGS')
     main_parser.add_argument('--version',
                              action='version',
-                             version='%(prog)s' + __version__,
+                             version='%(prog)s-' + __version__,
                              help='Show version number of currently installed package.')
 
     commands = main_parser.add_subparsers(metavar='COMMANDS')
 
+    # Update version command
     update_version = commands.add_parser('update_version',
                                          parents=[parser],
                                          help='Update kb version number regressions tests are run against.')
     update_version.add_argument('version_number', type=int, help='Version number.')
     update_version.set_defaults(func=update_version_number)
 
+    # Add endpoint command
     _add_endpoint = commands.add_parser('add_endpoint',
                                         parents=[parser],
                                         help='Add endpoint to the list of config endpoints for project.')
@@ -74,22 +76,39 @@ def create_parser():
     _add_endpoint.add_argument('url', type=str, help='Link to endpoint')
     _add_endpoint.set_defaults(func=add_endpoint)
 
+    # test command
     tester = commands.add_parser('test',
                                  parents=[parser],
                                  help='Run tests')
-    tester.add_argument('environment', nargs='?', default='staging', help='Environment in which to run regressions tests')
+    tester.add_argument('environment', nargs='?', default='staging',
+                        help='Environment in which to run regressions tests')
     # tester.add_argument('--all', dest='ALL', action='store_true', help='if present run all rts for <project>')
     tester.add_argument('-V', '--version_number', type=int, default=0, metavar='version_number',
                         help='Version number of kb to be tested.')
     tester.add_argument('-a', dest='all', action='store_true', help='Run tests on all known endpoints.')
     tester.set_defaults(func=test)
 
+    # show command
     _show = commands.add_parser('show',
                                 parents=[parser],
                                 help='Print list of selected config vars.')
-    _show.add_argument('var', help='Config var to retrieve.')
+    # TODO if var == all print all config vars
+    _show.add_argument('var', help='Config var to retrieve. Use "all" to view complete config.')
     _show.set_defaults(func=show)
 
+    _update_config = commands.add_parser('update_config',
+                                         parents=[parser],
+                                         help='Update config var from command line or from file.')
+    _update_config.add_argument('json', type=str, default=None, help='Config json')
+    _update_config.add_argument('-f', '--from_file', action='store_true', dest='FROM_FILE',
+                                help='Flag indicates json argument is a json file.')
+    _update_config.add_argument('-o', '--overwrite', action='store_true', dest='OVERWRITE',
+                                help="""
+                                    When present keys that currently exist in config will be overwritten indiscriminately.
+                                    If keys value is a dictionary the dictionary will replace the dictionary of that key in the config file.
+                                    """
+                                )
+    _update_config.set_defaults(func=update_config)
     return main_parser.parse_args()
 
 
@@ -189,6 +208,10 @@ def show(args):
     with open(directory, 'r') as f:
         config = json.loads(f.read())
 
+    if args.var == 'all':
+        print json.dumps(config, indent=2, sort_keys=True)
+        return
+
     if not config.get(args.var):
         print 'Error: No such config variable: %s' % args.var
         print config.keys()
@@ -247,10 +270,58 @@ def update_config(args):
 
     directory = os.path.join(DIRECTORY, 'project_configs', '%s.json' % args.project.lower())
 
-    with open(directory, 'r') as f:
-        config = json.loads(f.read())
+    try:
+        with open(directory, 'r') as f:
+            config = json.loads(f.read())
+    except IOError, io:
+        print('Could not load config file for %s' % args.project)
+        print('ERROR: %s' % io)
+        exit()
 
-    FROM_FILE = args.from_file
+    try:
+        # js = json string from a json file or raw from command line
+        js = args.json if not args.FROM_FILE else open(args.json, 'r').read()
+    except IOError:
+        print('JSON file "%s" not found' % args.json)
+        exit()
 
-    if not FROM_FILE:
-        config.update(json.loads(args.json))
+    try:
+        d = json.loads(js)
+        # json object must be dictionary; if captured json is of any other type raise a TypeError
+        if type(d) is not dict: raise TypeError()
+    except Exception, e:
+        if isinstance(e, TypeError): print('TypeError: JSON object must be a dictionary.')
+        elif isinstance(e, ValueError):
+            print('ValueError: No JSON object could be decoded.')
+            print('Check that %s is valid json.' % args.json)
+        else: print('%s: %s' % (e.__repr__(), e))
+        exit()
+
+    for key, value in d.items():
+        # if overwrite mode indiscriminately update config dictionary
+        # else if value exists and is a dictionary prompt user;
+        # append extra warning if value is dictionary as overwrite will delete previous values
+
+        if not args.OVERWRITE and key in config and type(config[key]) is dict:
+            msg = "Overwrite key: %s in config? (y/n)\nWARNING: OVERWRITE WILL DELETE ALL PREVIOUSLY SAVED VALUES\n" % key
+            overwrite = 'y' in raw_input(msg).lower()
+
+            if overwrite:
+                config[key] = value
+                m = 'Overwrote'
+            else:
+                config[key].update(value)
+                m = 'Updated'
+        else:
+            if key in config: m = 'Updated'
+            else: m = 'Added'
+            config[key] = value
+
+        print('%s %s' % (m, key))
+
+    try:
+        with open(directory, 'w') as f:
+            f.write(json.dumps(config, indent=2, sort_keys=True))
+    except Exception, e:
+        print('%s: %s' % (e.__repr__(), e))
+        exit()

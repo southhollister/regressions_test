@@ -16,9 +16,10 @@
   }, 
   "dtree_input": "test dtree", 
   "endpoints": {
-    "staging": "https://vastage1.creativevirtual15.com/quarkstaging/bot.htm", 
-    "test_endpoint": "google.com"
+    "foo": "bar", 
+    "test_endpoint": "creativevirtual.com"
   }, 
+  "foo": "bar", 
   "live_chat_values": {
     "live_chat_input": [
       "live chat"
@@ -27,5 +28,6 @@
   }, 
   "name": "Quark", 
   "semantic_input": "products", 
-  "version_number": "3000"
+  "test": "mic check", 
+  "version_number": 98
 }
