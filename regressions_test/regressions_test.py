@@ -14,7 +14,7 @@ Commands:
 """
 
 # TODO https://stackoverflow.com/questions/24892396/py-test-logging-messages-and-test-results-assertions-into-a-single-file
-# TODO add command to list all projects
+# TODO Create PII Tests
 # TODO add create new project command
 
 import sys
@@ -24,6 +24,8 @@ import json
 import argparse
 import os
 from engine_request import EngineRequest
+from shutil import copy
+from collections import namedtuple
 
 
 # Constants
@@ -52,14 +54,18 @@ def create_parser():
     parser.add_argument('project', help='Name of project.')
 
     # Main parser; has commands sub parser
-    main_parser = argparse.ArgumentParser(description='Regressions testing module for core script projects.',
-                                          usage='regressions_test [-h] COMMAND PROJECT ARGS')
+    main_parser = argparse.ArgumentParser(description='Regressions testing module for core script projects.')
     main_parser.add_argument('--version',
                              action='version',
                              version='%(prog)s-' + __version__,
                              help='Show version number of currently installed package.')
 
     commands = main_parser.add_subparsers(metavar='COMMANDS')
+
+    # List projects
+    _list_projects = commands.add_parser('list_projects',
+                                         help='Print a list of all currently testable projects')
+    _list_projects.set_defaults(func=list_projects)
 
     # Update version command
     update_version = commands.add_parser('update_version',
@@ -109,6 +115,23 @@ def create_parser():
                                     """
                                 )
     _update_config.set_defaults(func=update_config)
+
+    # create project command
+    _create_project = commands.add_parser('create_project',
+                                          help='Create new project to be tested')
+    config_args = _create_project.add_mutually_exclusive_group(required=False)
+    config_args.add_argument('-n', '--blank_config', action='store_true', dest='BLANK_CONFIG',
+                             help="""When present no values will be added to the config file and user will not be prompted for them.
+                             Variables can be added later via the update_config command.""")
+    config_args.add_argument('-f', '--config_file', type=argparse.FileType(), default=None,
+                             help="JSON file to be used as config file. File must at least contain 'name' value. "
+                                  "File is copied to project_configs directory and renamed as <project>.json.")
+    config_args.add_argument('-c', '--clone_project_config', nargs=2, type=str, metavar='PROJECT_NAME', default=None,
+                             help="Clone another projects config file, replacing name value with NEW_PROJECT_NAME.")
+    _create_project.add_argument('-t', '--custom_tests_file', type=argparse.FileType('r'), default=None,
+                                 help='Python file containing custom tests')
+    _create_project.set_defaults(func=create_project)
+
     return main_parser.parse_args()
 
 
@@ -325,3 +348,122 @@ def update_config(args):
     except Exception, e:
         print('%s: %s' % (e.__repr__(), e))
         exit()
+
+
+def list_projects(args=None):
+    """
+    List all projects by reading the config files in the project_configs folder
+    :return:
+    """
+
+    directory = os.path.join(DIRECTORY, 'project_configs')
+    config_files = os.listdir(directory)
+
+    files = list()
+    for _file in config_files:
+        with open(os.path.join(directory, _file), 'r') as f:
+            js = json.loads(f.read())
+            print(js.get('name', 'ERROR'))
+            files.append(js.get('name', 'ERROR'))
+
+    return files
+
+
+def create_project(args):
+    """
+    Create a new project
+    :param args:
+    :return:
+    """
+
+    tests_dir = os.path.join(DIRECTORY, 'tests')
+    config_dir = os.path.join(DIRECTORY, 'project_configs')
+
+    # handle config creation based on vars
+    if args.BLANK_CONFIG:
+        project_name = raw_input('Project name:  ').lower().strip().replace(' ', '_')
+        if not project_name: raise ValueError('Project name is required.')
+        with open(os.path.join(config_dir, '%s.json' % project_name), 'w') as f:
+            f.writelines(json.dumps({"name": project_name}, indent=2))
+
+    elif args.config_file:
+        try:
+            config = json.loads(args.config_file.read())
+            if not config:
+                raise Exception('File does not contain valid json')
+
+            if not config.get('name'):
+                raise Exception('"name" is a required value')
+
+            new_file_name = config['name'].lower().strip().replace(' ', '_')
+            copy(args.config_file.name, os.path.join(config_dir, new_file_name))
+
+        except Exception, e:
+            print('%s: %s' % (type(e), e))
+            print(args.config_file)
+
+    elif args.clone_project_config:
+        org_project, new_project = args.clone_project_config
+        try:
+            if org_project.strip() not in list_projects(): raise Exception('%s project not found.' % org_project)
+            new_file_name = new_project.lower().strip().replace(' ', '_')
+            copy(os.path.join(DIRECTORY, 'project_configs', '%s.json' % org_project.lower().replace(' ', '_')),
+                 os.path.join(DIRECTORY, 'project_configs', '%s.json' % new_file_name))
+
+            fake_args = namedtuple('fake_args', 'FROM_FILE, OVERWRITE, json, project')
+            js = json.dumps({"name": new_project})
+
+            update_config(fake_args(FROM_FILE=False, OVERWRITE=True, json=js, project=new_project))
+
+        except Exception, e:
+            print('%s' % e)
+
+    # step through each config var one by one
+    else:
+        project_name = raw_input("Project name:  ")
+        new_file_name = project_name.lower().strip().replace(' ', '_')
+
+        semantic_input = raw_input("Semantic trigger:  ").strip()
+        dtree_input = raw_input("Dtree trigger:  ").strip()
+
+        active_close_answer_id = raw_input("Active close answer id:  ").strip()
+        active_close_input = raw_input("Active close input:  ").strip()
+
+        live_chat_inputs = list()
+        more = True
+        while more:
+            lc_input = raw_input("Live chat input:  ").strip()
+            live_chat_inputs.append(lc_input)
+            more = raw_input("More live chat steps (y/n):  ").strip().lower() == 'y'
+
+        live_chat_skill = raw_input("Live chat skill:  ")
+
+        endpoints = {}
+        more = True
+        while more:
+            endpoint = raw_input("Endpoint name:  ").strip()
+            url = raw_input("Url:  ").strip()
+            endpoints[endpoint] = url
+            more = raw_input("Add endpoints (y/n):  ").strip().lower() == 'y'
+
+        js = {
+            'name': project_name,
+            'semantic_input': semantic_input,
+            'dtree_input': dtree_input,
+            'active_close_values': {
+                'answer_id': active_close_answer_id,
+                'input': active_close_input
+            },
+            'live_chat_values': {
+                'live_chat_input': live_chat_inputs,
+                'live_chat_skill': live_chat_skill
+            },
+            'endpoints': endpoints
+        }
+
+        try:
+            with open(os.path.join(config_dir, '%s.json' % new_file_name), 'w') as f:
+                f.write(json.dumps(js, indent=2, sort_keys=True))
+
+        except Exception, e:
+            print(e)

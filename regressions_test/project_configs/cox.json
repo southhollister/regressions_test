@@ -1,0 +1,19 @@
+{
+  "active_close_values": {
+    "answer_id": "319",
+    "input": "autosubmission"
+  }, 
+  "dtree_input": "how can i move my service", 
+  "endpoints": {
+    "staging": "https://vastage1.creativevirtual15.com/coxstaging/bot.htm"
+  }, 
+  "live_chat_values": {
+    "live_chat_input": [
+      "sales live chat"
+    ], 
+    "live_chat_skill": "VA-res-sales-english"
+  }, 
+  "name": "Cox", 
+  "semantic_input": "products",
+  "version_number": "2708"
+}
