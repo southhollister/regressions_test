@@ -1,22 +1,23 @@
 {
-  "name": "NYT",
-  "endpoints": {
-    "staging": "https://vastage1.creativevirtual15.com/nytstaging/bot.htm",
-    "ny1": "http://vip.ny1.creativevirtual15.com/nyt/bot.htm?JSIN=1",
-    "il1": "http://vip.il1.creativevirtual15.com/nyt/bot.htm?JSIN=1"
-  },
-  "live_chat_values": {
-    "live_chat_input": ["live chat"],
-    "live_chat_skill": "24-7"
-  },
   "active_close_values": {
-    "answer_id": "188",
+    "answer_id": "188", 
     "input": "autosubmission"
-  },
-  "version_number": "2566",
-  "semantic_input": "papers",
-  "dtree_input": "how do i contact the new york times",
-  "disambiguation_input": "can i get the education discount",
-  "custom": {
-  }
+  }, 
+  "custom": {}, 
+  "disambiguation_input": "can i get the education discount", 
+  "dtree_input": "how do i contact the new york times", 
+  "endpoints": {
+    "il1": "http://vip.il1.creativevirtual15.com/nyt/bot.htm?JSIN=1", 
+    "ny1": "http://vip.ny1.creativevirtual15.com/nyt/bot.htm?JSIN=1", 
+    "staging": "https://vastage1.creativevirtual15.com/nytstaging/bot.htm"
+  }, 
+  "live_chat_values": {
+    "live_chat_input": [
+      "live chat"
+    ], 
+    "live_chat_skill": "24-7"
+  }, 
+  "name": "NYT", 
+  "semantic_input": "papers", 
+  "version_number": "2733"
 }

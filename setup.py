@@ -1,13 +1,20 @@
 """setup.py; setuptools control"""
 
 from setuptools import setup
+import os
 
-with open('README.rst', 'rb') as f:
+
+directory = os.path.dirname(os.path.abspath(__file__))
+
+with open(os.path.join(directory, 'README.rst'), 'rb') as f:
     long_descr = f.read().decode('utf-8')
+
+with open(os.path.join(directory, 'VERSION'), 'rb') as f:
+    version = f.read().decode('utf-8').strip()
 
 setup(
     name='regressions_test',
-    version='4.0.1',
+    version=version,
     packages=['regressions_test'],
     install_requires=['pytest'],
     scripts=['bin/regressions_test'],

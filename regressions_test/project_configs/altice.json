@@ -1,8 +1,8 @@
 {
   "custom": {
-    "shortened_related_result_text_input": "schedule appointment",
+    "shortened_related_result_text_input": "schedule appointment", 
     "user_intent_values": {
-      "input": "want new service",
+      "input": "want new service", 
       "text": "I want new service"
     }
   }, 
@@ -19,5 +19,5 @@
   "name": "Altice", 
   "related_results_prompt": "Here are some related items:", 
   "semantic_input": "products", 
-  "version_number": "88"
+  "version_number": "99"
 }

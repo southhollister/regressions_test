@@ -5,5 +5,5 @@ project_config.py
 *.pyc
 fiddle.*
 *egg-*/
-build/
-dist/
+build/*
+dist/*
