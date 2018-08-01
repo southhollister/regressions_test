@@ -1,19 +1,25 @@
 {
   "active_close_values": {
-    "answer_id": "319",
+    "answer_id": "319", 
     "input": "autosubmission"
   }, 
   "dtree_input": "how can i move my service", 
   "endpoints": {
+    "prod": "https://cox.creativevirtual15.com/cox/bot.htm", 
     "staging": "https://vastage1.creativevirtual15.com/coxstaging/bot.htm"
   }, 
   "live_chat_values": {
+    "extra_data": {
+      "exitsurvey": "NPS Survey", 
+      "offlinesurvey": "Cox Care Offline Survey", 
+      "pcs": "Cox Care PreChat Survey v2"
+    }, 
     "live_chat_input": [
-      "sales live chat"
+      "support live chat"
     ], 
-    "live_chat_skill": "VA-res-sales-english"
+    "live_chat_skill": "chat-pilot-english"
   }, 
   "name": "Cox", 
-  "semantic_input": "products",
-  "version_number": "2708"
+  "semantic_input": "products", 
+  "version_number": "2724"
 }

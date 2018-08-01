@@ -18,7 +18,6 @@
   "endpoints": {
     "staging": "https://vastage1.creativevirtual15.com/quarkstaging/bot.htm"
   }, 
-  "foo": "bar", 
   "live_chat_values": {
     "live_chat_input": [
       "live chat"
@@ -27,6 +26,5 @@
   }, 
   "name": "Quark", 
   "semantic_input": "products", 
-  "test": "mic check", 
-  "version_number": "2680"
+  "version_number": "2716"
 }

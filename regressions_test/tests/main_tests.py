@@ -61,6 +61,9 @@ def test_live_chat(live_chat_values, params, engine):
     assert r.get('livechatskill') == live_chat_values['live_chat_skill']
     assert r.get('livechatrequested') == 'true', 'Live chat maybe out of HOO'
 
+    for key, value in live_chat_values.get('extra_data', {}).items():
+        assert r.get(key) == value, '%s failed' % key
+
 
 # TODO build out function to test complete tree
 def test_active_close(active_close_values, params, engine):
@@ -78,6 +81,8 @@ def test_semantic(semantic_input, params, engine):
     params['entry'] = semantic_input
     r = engine.make_request(params)
     assert r.get('related_list', None) is not None
+    for faq in r.get('related_list', {}):
+        assert faq.get('subtype') is not None
 
 
 def test_versionnumber(version_number, params, engine):
@@ -118,7 +123,8 @@ def test_blank_connectors(blank_connector_values, params, engine):
 
 def test_dtree(dtree_input, engine):
     params = dict()
-    params['ident'] = ''
+    r = engine.make_request(params)
+    params['ident'] = r.get('ident')
     params['entry'] = dtree_input
     r = engine.make_request(params)
 

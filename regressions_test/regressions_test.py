@@ -259,7 +259,7 @@ def add_endpoint(args):
 
     new_json['endpoints'][args.name] = args.url
 
-    with open('project_configs/%s.json' % args.project.lower(), 'w') as f:
+    with open(directory, 'w') as f:
         f.write(json.dumps(new_json, indent=2, sort_keys=True))
 
     print 'Added endpoint', args.name, args.url, 'to',  args.project

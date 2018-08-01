@@ -68,6 +68,7 @@ def init_value_keys(project_config):
             'recognitionID', 'section', 'transactioncount', 'userentryallowed', 'userlogid', 'validresponse']
 
 
+# TODO parametrize this fixture to be able to test all live chat queues
 @pytest.fixture
 def live_chat_values(project_config):
     return project_config.get('live_chat_values', {})
