@@ -26,5 +26,12 @@
   }, 
   "name": "Quark", 
   "semantic_input": "products", 
-  "version_number": "2716"
+  "version_number": "2716",
+  "blank_related_results_prompt_input": "test blank related prompt",
+  "multipart_answer_values":{
+    "non_multipart_channel": "Root.SMS",
+    "multipart_channel": "Root.Web",
+    "delimiter": "##mp##",
+    "input": "test multipart answer"
+  }
 }

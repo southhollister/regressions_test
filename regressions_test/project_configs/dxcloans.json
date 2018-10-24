@@ -1,0 +1,18 @@
+{
+  "active_close_values": {
+    "answer_id": "82", 
+    "input": "autosubmission"
+  }, 
+  "dtree_input": "autosubmission", 
+  "endpoints": {
+    "staging": "http://vastage1.creativevirtual15.com/dxcloanstaging/bot.htm"
+  }, 
+  "live_chat_values": {
+    "live_chat_input": [
+      "test live chat"
+    ], 
+    "live_chat_skill": ""
+  }, 
+  "name": "dxcloans", 
+  "semantic_input": "loan"
+}

@@ -103,3 +103,7 @@ def dtree_input(project_config):
 def related_results_prompt(project_config):
     return project_config.get('related_results_prompt', None)
 
+
+@pytest.fixture
+def multipart_answer(project_config):
+    return project_config.get('multipart_answer_values', {})
